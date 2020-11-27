@@ -2,8 +2,22 @@
   <div class="hello" v-if="isLogin">
     <p>hello man</p>
   </div>
-  <div v-else>
-    <Input v-model="password" type="password" password placeholder="Enter password..." style="width: 200px" />
+  <div v-else class="hello">
+    <Form ref="formInline" :v-model="formInline" >
+      <FormItem prop="user">
+        <Input type="text" v-model="formInline.user" placeholder="Username">
+          <Icon type="ios-person-outline" slot="prepend"></Icon>
+        </Input>
+      </FormItem>
+      <FormItem prop="password">
+        <Input type="password" v-model="formInline.password" placeholder="Password">
+          <Icon type="ios-lock-outline" slot="prepend"></Icon>
+        </Input>
+      </FormItem>
+      <FormItem>
+        <Button type="primary" @click="handleSubmit">Signin</Button>
+      </FormItem>
+    </Form>
   </div>
 </template>
 
@@ -13,11 +27,19 @@ export default {
   props: {
     msg: String
   },
-  data: () =>{
-    return{
+  data: () => {
+    return {
       isLogin: false,
-      password: '',
-      username: ''
+      formInline: {}
+    }
+  },
+  methods: {
+    handleSubmit() {
+      this.$http.post('/login', { username: this.formInline.user, password: this.formInline.password })
+        .then(res => {
+          console.log(res)
+          this.isLogin = true
+        })
     }
   }
 }
@@ -29,5 +51,7 @@ export default {
   display: flex;
   align-items:center;
   justify-content:center;
+  // height: 100%;
+  margin-top: 2%; //居然是用宽度的百分比
 }
 </style>

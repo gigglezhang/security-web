@@ -9,6 +9,6 @@ app.use(express.json())
 
 app.post('/login', login)
 
-app.listen(port, 'localhost', () =>{
-    console.log(`server is start on ${port}`)
+app.listen(port, 'localhost', () => {
+  console.log(`server is start on ${port}`)
 })
