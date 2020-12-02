@@ -1,44 +1,47 @@
 <template>
   <div class="hello" v-if="isLogin">
-    <p>hello man</p>
+    <div>
+      <h1>hello man</h1>
+      <Button @click="handlePorductId" type="primary">getProductId</Button>
+      <h4>productId {{productId}}</h4>
+      <Button @click="logOut" type="error">logOut</Button>
+    </div>
   </div>
   <div v-else class="hello">
-    <Form ref="formInline" :v-model="formInline" >
-      <FormItem prop="user">
-        <Input type="text" v-model="formInline.user" placeholder="Username">
-          <Icon type="ios-person-outline" slot="prepend"></Icon>
-        </Input>
-      </FormItem>
-      <FormItem prop="password">
-        <Input type="password" v-model="formInline.password" placeholder="Password">
-          <Icon type="ios-lock-outline" slot="prepend"></Icon>
-        </Input>
-      </FormItem>
-      <FormItem>
-        <Button type="primary" @click="handleSubmit">Signin</Button>
-      </FormItem>
-    </Form>
+    <Login @success="success"></Login>
   </div>
 </template>
 
 <script>
+import { delCookie } from '../utils/utils'
+import Login from './login/Login.vue'
+
 export default {
   name: 'HelloWorld',
-  props: {
-    msg: String
-  },
   data: () => {
     return {
       isLogin: false,
-      formInline: {}
+      productId: ''
     }
   },
+  components: {
+    Login
+  },
   methods: {
-    handleSubmit() {
-      this.$http.post('/login', { username: this.formInline.user, password: this.formInline.password })
+    logOut() {
+      this.isLogin = false
+      delCookie('token')
+    },
+    success() {
+      this.isLogin = true
+    },
+    handlePorductId() {
+      this.$http.get('/getOrder/' + 1)
         .then(res => {
-          console.log(res)
-          this.isLogin = true
+          console.log(res.data)
+          if (res.data) {
+            this.productId = res.data.productId
+          }
         })
     }
   }
