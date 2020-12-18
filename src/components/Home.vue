@@ -8,15 +8,18 @@
     </div>
   </div>
   <div v-else class="hello">
-    <Login @success="success"></Login>
+    <!-- <Login @success="success"></Login> -->
+    <Button @click="login" type="success">login</Button>
   </div>
 </template>
 
 <script>
+import { stringify } from 'qs'
 import { delCookie } from '../utils/utils'
-import Login from './login/Login.vue'
+// import Login from './login/Login.vue'
 
 export default {
+
   name: 'HelloWorld',
   data: () => {
     return {
@@ -24,8 +27,21 @@ export default {
       productId: ''
     }
   },
+  props: {
+    access_token: {
+      type: String,
+      default: ''
+    },
+    // eslint-disable-next-line vue/require-prop-type-constructor
+    token_type: '',
+    // eslint-disable-next-line vue/require-prop-type-constructor
+    expires_in: '',
+    // eslint-disable-next-line vue/require-prop-type-constructor
+    scope: ''
+  },
+
   components: {
-    Login
+    // Login
   },
   methods: {
     logOut() {
@@ -43,6 +59,17 @@ export default {
             this.productId = res.data.productId
           }
         })
+    },
+    login() {
+      // window.open('https://www.baidu.com')
+      window.location = 'http://localhost:9090/oauth/authorize?response_type=code&client_id=gateway&state=' + '/'
+    }
+  },
+  mounted() {
+    console.log(this.access_token)
+    console.log(this.$props)
+    if (this.access_token) {
+      setCookie('token', this.access_token)
     }
   }
 }

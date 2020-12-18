@@ -14,7 +14,7 @@ app.use(cookieParser())
 
 app.post('/login', login)
 
-app.get('/oauthCallback', oauthCallback)
+app.get('/authCallback', oauthCallback)
 
 app.get('/getOrder/:orderId', getOrder)
 
