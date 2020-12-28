@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import { stringify } from 'qs'
-import { delCookie } from '../utils/utils'
+// import { stringify } from 'qs'
+import { delCookie, getCookie, setCookie } from '../utils/utils'
 // import Login from './login/Login.vue'
 
 export default {
@@ -24,7 +24,8 @@ export default {
   data: () => {
     return {
       isLogin: false,
-      productId: ''
+      productId: '',
+      userInfo: {}
     }
   },
   props: {
@@ -63,6 +64,13 @@ export default {
     login() {
       // window.open('https://www.baidu.com')
       window.location = 'http://localhost:9090/oauth/authorize?response_type=code&client_id=gateway&state=' + '/'
+    },
+    getUserInfo(userInfo) {
+      this.$http.get('/getUserInfo').then(res => {
+        if (res.data) {
+          console.log(res.data)
+        }
+      })
     }
   },
   mounted() {
@@ -70,6 +78,11 @@ export default {
     console.log(this.$props)
     if (this.access_token) {
       setCookie('token', this.access_token)
+    }
+    // 支持cookies
+    if (getCookie('token')) {
+      this.getUserInfo(this.userInfo)
+      if (this.userInfo) { this.isLogin = true }
     }
   }
 }
