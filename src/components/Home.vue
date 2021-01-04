@@ -25,7 +25,8 @@ export default {
     return {
       isLogin: false,
       productId: '',
-      userInfo: {}
+      userInfo: null,
+      access_token: ''
     }
   },
   props: {
@@ -46,11 +47,12 @@ export default {
   },
   methods: {
     logOut() {
-      this.isLogin = false
+      // this.isLogin = false
       delCookie('token')
+      window.location = 'http://localhost:9090/logout?redirect_uri=http://localhost:8080/'
     },
     success() {
-      this.isLogin = true
+      // this.isLogin = true
     },
     handlePorductId() {
       this.$http.get('/getOrder/' + 1)
@@ -63,13 +65,19 @@ export default {
     },
     login() {
       // window.open('https://www.baidu.com')
-      window.location = 'http://localhost:9090/oauth/authorize?response_type=code&client_id=gateway&state=' + '/'
+      window.location = 'http://localhost:9090/oauth/authorize?response_type=code&client_id=gateway&state=' +
+      'redirect_uri=http://localhost:6969/authCallback' +
+      '/'
     },
-    getUserInfo(userInfo) {
+    getUserInfo(token) {
       this.$http.get('/getUserInfo').then(res => {
         if (res.data) {
           console.log(res.data)
+          this.userInfo = res.data.user_name
         }
+      }).catch(err => {
+        console.error(err)
+        this.userInfo = null
       })
     }
   },
@@ -77,12 +85,18 @@ export default {
     console.log(this.access_token)
     console.log(this.$props)
     if (this.access_token) {
-      setCookie('token', this.access_token)
+      setCookie('token', this.access_token, 3600000)
     }
     // 支持cookies
-    if (getCookie('token')) {
-      this.getUserInfo(this.userInfo)
-      if (this.userInfo) { this.isLogin = true }
+    const token = getCookie('token')
+    console.log(token)
+    if (token) {
+      this.getUserInfo(token)
+      if (this.userInfo) {
+        this.isLogin = true
+      } else {
+        // delCookie('token')
+      }
     }
   }
 }

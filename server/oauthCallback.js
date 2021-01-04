@@ -50,7 +50,7 @@ function authCallback(req, resp) {
       })
     }
   }).catch(error => {
-    console.log(error)
+    // console.log(error)
     resp.status(500).json({
       msg: error.response.data,
       status: 500
