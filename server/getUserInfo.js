@@ -28,9 +28,9 @@ function getOrder(req, resp) {
       })
     }
   }).catch(error => {
-    console.log(error)
+    console.log(error.response.data)
     resp.status(500).json({
-      msg: error.response.data,
+      data: error.response.data,
       status: 500
     })
   })

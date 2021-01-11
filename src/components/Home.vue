@@ -25,8 +25,7 @@ export default {
     return {
       isLogin: false,
       productId: '',
-      userInfo: null,
-      access_token: ''
+      userInfo: null
     }
   },
   props: {
@@ -69,19 +68,18 @@ export default {
       'redirect_uri=http://localhost:6969/authCallback' +
       '/'
     },
-    getUserInfo(token) {
-      this.$http.get('/getUserInfo').then(res => {
-        if (res.data) {
-          console.log(res.data)
-          this.userInfo = res.data.user_name
-        }
-      }).catch(err => {
+    async getUserInfo(token) {
+      const res = await this.$http.get('/getUserInfo').catch(err => {
         console.error(err)
         this.userInfo = null
       })
+      if (res.data) {
+        console.log(res.data)
+        this.userInfo = res.data.user_name
+      }
     }
   },
-  mounted() {
+  async mounted() {
     console.log(this.access_token)
     console.log(this.$props)
     if (this.access_token) {
@@ -91,7 +89,7 @@ export default {
     const token = getCookie('token')
     console.log(token)
     if (token) {
-      this.getUserInfo(token)
+      await this.getUserInfo(token)
       if (this.userInfo) {
         this.isLogin = true
       } else {
